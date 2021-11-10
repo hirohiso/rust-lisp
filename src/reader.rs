@@ -20,6 +20,10 @@ fn read_form(token_list : Vec<&str>) -> Vec<LispCell>{
     return result;
 }
 
+fn read_atom(token_list : Vec<&str>) -> LispCell{
+    return LispCell::None;
+}
+
 
 #[test]
 fn comfirm_tokenizer(){
