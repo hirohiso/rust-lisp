@@ -16,11 +16,16 @@ fn read_form(token_list : Vec<&str>) -> Vec<LispCell>{
     let result = Vec::new();
     if token_list[0] == "("{
         let mut list = LispCell::List{values: Vec::new()};
+        let _ret = read_list(token_list);
     }
     return result;
 }
 
 fn read_atom(token_list : Vec<&str>) -> LispCell{
+    return LispCell::None;
+}
+
+fn read_list(token_list : Vec<&str>) -> LispCell{
     return LispCell::None;
 }
 
