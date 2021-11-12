@@ -26,6 +26,14 @@ fn read_atom(token_list : Vec<&str>) -> LispCell{
 }
 
 fn read_list(token_list : Vec<&str>) -> LispCell{
+    //token_listから一つtokenをとる
+    //)以外の場合はrea_formを読み出す
+    if token_list[0] == ")"{
+        return LispCell::None;
+    }else{
+        let mut list = LispCell::List{values: Vec::new()};
+        let _ret = read_form(token_list);
+    }
     return LispCell::None;
 }
 
