@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use regex::{NoExpand, Regex};
 use crate::types::LispCell;
 
@@ -37,17 +39,20 @@ impl <'a>readerObj<'a> {
     }
 
     fn read_form(&mut self) -> Vec<LispCell>{
-        let result = Vec::new();
+        let mut result = Vec::new();
         if self.peek().unwrap()  == "("{
-            let list = LispCell::List{values: Vec::new()};
             let _ = self.pop().unwrap() ;
-            let _ret = self.read_list();
+            let ret = self.read_list();
+            let mut list = LispCell::List{values: vec![ret]};
+            result.push(list);
+            return result;
         }
         return result;
     }
 
-    fn read_atom(&self) -> LispCell{
-        return LispCell::None;
+    fn read_atom(&mut self) -> LispCell{
+        let sym = self.pop().unwrap();
+        return LispCell::Symbol(String::from_str(sym).unwrap());
     }
 
 
