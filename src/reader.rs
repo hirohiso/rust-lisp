@@ -1,4 +1,4 @@
-use regex::Regex;
+use regex::{NoExpand, Regex};
 use crate::types::LispCell;
 
 fn read_str(src : &str) {
@@ -12,29 +12,57 @@ fn tokenize(src : &str) -> Vec<&str>{
     re.captures_iter(src).map(|e| e.get(1).unwrap().as_str()).collect()
 }
 
-fn read_form(token_list : Vec<&str>) -> Vec<LispCell>{
-    let result = Vec::new();
-    if token_list[0] == "("{
-        let mut list = LispCell::List{values: Vec::new()};
-        let _ret = read_list(token_list);
+
+
+struct readerObj<'a>{
+    ptr : usize,
+    token_list :Vec<&'a str> ,
+}
+
+impl <'a>readerObj<'a> {
+    fn peek(&self)->Option<&str>{
+        if self.ptr >= self.token_list.len(){
+            return None;
+        }
+        Some(self.token_list[self.ptr])
     }
-    return result;
-}
 
-fn read_atom(token_list : Vec<&str>) -> LispCell{
-    return LispCell::None;
-}
+    fn pop(&mut self)->Option<&str>{
+        if self.ptr >= self.token_list.len(){
+            return None;
+        }
+        let ret = self.token_list[self.ptr];
+        self.ptr += 1;
+        Some(ret)
+    }
 
-fn read_list(token_list : Vec<&str>) -> LispCell{
-    //token_listから一つtokenをとる
-    //)以外の場合はrea_formを読み出す
-    if token_list[0] == ")"{
+    fn read_form(&mut self) -> Vec<LispCell>{
+        let result = Vec::new();
+        if self.peek().unwrap()  == "("{
+            let list = LispCell::List{values: Vec::new()};
+            let _ = self.pop().unwrap() ;
+            let _ret = self.read_list();
+        }
+        return result;
+    }
+
+    fn read_atom(&self) -> LispCell{
         return LispCell::None;
-    }else{
-        let mut list = LispCell::List{values: Vec::new()};
-        let _ret = read_form(token_list);
     }
-    return LispCell::None;
+
+
+    fn read_list(&mut self) -> LispCell{
+        //token_listから一つtokenをとる
+        //)以外の場合はrea_formを読み出す
+        if self.peek().unwrap() == ")"{
+            let _ = self.pop().unwrap() ;
+            return LispCell::None;
+        }else{
+            let mut list = LispCell::List{values: Vec::new()};
+            let _ret = self.read_form();
+        }
+        return LispCell::None;
+    }
 }
 
 
@@ -46,4 +74,20 @@ fn comfirm_tokenizer(){
     assert_eq!(vec!["(","+","2","(","*","3","4",")",")"],actual);
     let actual = tokenize("(+ 122 (3))");
     assert_eq!(vec!["(","+","122","(","3",")",")"],actual);
+}
+
+#[test]
+fn read_object_test(){
+    let mut sut = readerObj{
+        ptr : 0,
+        token_list : vec!["(","1","22",")"],
+    };
+
+    assert_eq!(sut.peek().unwrap(),"(");
+    assert_eq!(sut.pop().unwrap(),"(");
+    assert_eq!(sut.pop().unwrap(),"1");
+    assert_eq!(sut.pop().unwrap(),"22");
+    assert_eq!(sut.pop().unwrap(),")");
+    assert_eq!(sut.pop(),None);
+
 }
