@@ -3,8 +3,10 @@ use std::str::FromStr;
 use crate::types::LispCell;
 use regex::{NoExpand, Regex};
 
-fn read_str(src: &str) {
-    tokenize(src);
+pub fn read_str(src: &str)->LispCell {
+    let list = tokenize(src);
+    let mut obj = readerObj{ptr :0,token_list: list};
+    obj.read_form()
 }
 
 fn tokenize(src: &str) -> Vec<&str> {
@@ -69,9 +71,13 @@ impl<'a> readerObj<'a> {
                 content.push(ret);
             }
         }
-        //エラーの方がいい
+        //TODO:エラーの方がいい
         return LispCell::None;
     }
+}
+#[test]
+fn read_str_test() {
+    let actual = read_str("(* 1 (+ 1 2))");
 }
 
 #[test]
