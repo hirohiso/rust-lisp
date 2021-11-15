@@ -1,15 +1,14 @@
 use crate::types::LispCell;
 
-pub fn pr_str(target :LispCell){
+pub fn pr_str(target :LispCell)->String{
     match target {
-        LispCell::Number(num) => print!(" {} ",num),
-        LispCell::Symbol(sym) => print!(" {} ",sym),
+        LispCell::Number(num) => return num.to_string(),
+        LispCell::Symbol(sym) => return sym,
         LispCell::List { values } => {
-            print!("(");
-            values.into_iter().for_each(|e| pr_str(e));
-            print!(")");
+            let arr = values.into_iter().map(|e|pr_str(e)).collect::<Vec<_>>().join(" ");
+            return format!("({})",arr);
         },
-        LispCell::None => print!(""),
+        LispCell::None => return "".to_string(),
     }
 }
 
@@ -27,5 +26,6 @@ fn pr_str_test(){
     let list1 = LispCell::List {
         values: vec![symbol1, symbol2, list2],
     };
-    pr_str(list1);
+    let acual = pr_str(list1);
+    assert_eq!(acual,"(* 1 (+ 32 4))")
 }

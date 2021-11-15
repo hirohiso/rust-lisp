@@ -27,7 +27,8 @@ fn eval(exp : LispCell) -> LispCell{
 }
 
 fn write(out:LispCell){
-    pr_str(out);
+    let result = pr_str(out);
+    println!("{}",result);
 }
 
 
