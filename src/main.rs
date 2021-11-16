@@ -7,8 +7,19 @@ use types::LispCell;
 mod reader;
 mod printer;
 mod types;
+mod eval;
 
 fn main() {
+    let enviroment = |sym:String,x:i32,y:i32|->i32{
+        match sym.as_str() {
+            "+" => return x + y,
+            "-" => return x - y,
+            "*" => return x * y ,
+            "/" => return x / y,
+            _ => return 0,
+        }
+    };
+
     loop{
         println!("input eval");
         write(eval(read()));
