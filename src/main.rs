@@ -10,19 +10,16 @@ mod types;
 mod eval;
 
 fn main() {
-    let enviroment = |sym:String,x:i32,y:i32|->i32{
-        match sym.as_str() {
-            "+" => return x + y,
-            "-" => return x - y,
-            "*" => return x * y ,
-            "/" => return x / y,
-            _ => return 0,
-        }
-    };
+    let mut enviroment: Vec<(&str,fn(Vec<i32>)->i32)> = vec![
+        ("+",|args|{args[0] + args[1]} ),
+        ("-",|args|{args[0] - args[1]} ),
+        ("*",|args|{args[0] * args[1]} ),
+        ("/",|args|{args[0] / args[1]} ),
+        ];
 
     loop{
         println!("input eval");
-        write(eval(read()));
+        write(eval(read(),&mut enviroment));
         println!("");
     }
 }
@@ -33,7 +30,7 @@ fn read() -> LispCell {
     read_str(input.as_str())
 }
 
-fn eval(exp : LispCell) -> LispCell{
+fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCell{
     exp
 }
 
