@@ -31,7 +31,26 @@ fn read() -> LispCell {
 }
 
 fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCell{
-    exp
+    if let LispCell::List{values} = exp {
+        if values.len() == 0 {
+            return LispCell::List{values:values};
+        }
+        return LispCell::None;
+    }
+    return eval_ast(exp, enviroment)
+}
+
+fn eval_ast(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCell{
+    match exp {
+        LispCell::Symbol(_) => {
+            return exp;
+        },
+        LispCell::List {..} => {
+            return exp;
+        },
+        _ => (),
+    }
+    return exp;
 }
 
 fn write(out:LispCell){
