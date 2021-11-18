@@ -1,4 +1,4 @@
-use std::{io, ops::Deref};
+use std::{env, io, ops::Deref};
 
 use reader::read_str;
 use printer::pr_str;
@@ -34,6 +34,13 @@ fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCel
     if let LispCell::List{values} = exp {
         if values.len() == 0 {
             return LispCell::List{values:values};
+        }else{
+            //SYMBOLに合わせて関数を取得する
+            let func = enviroment[0].1;
+            
+            //引数をint型で取得する
+            let args = vec![];
+            let ret = func(args);
         }
         return LispCell::None;
     }
