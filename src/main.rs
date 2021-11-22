@@ -36,7 +36,8 @@ fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCel
             return LispCell::List{values:values};
         }else{
             //SYMBOLに合わせて関数を取得する
-            let func = enviroment[0].1;
+            let tapl = (*enviroment).iter().find(|e|(**e).0 == "+")?;
+            let func = tapl.1;
             
             //引数をint型で取得する
             let args = vec![];
