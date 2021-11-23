@@ -40,8 +40,9 @@ fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCel
             if let Some(val) = tapl{
                 let func = val.1;               
                 //引数をint型で取得する
-                let args = vec![];
+                let args = vec![1,2];
                 let ret = func(args);
+                return LispCell::Number(ret);
             }
 
         }
