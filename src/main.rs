@@ -10,7 +10,7 @@ mod types;
 mod eval;
 
 fn main() {
-    let mut enviroment: Vec<(&str,fn(Vec<i32>)->i32)> = vec![
+    let mut enviroment: Vec<(&str,fn(&[i32])->i32)> = vec![
         ("+",|args|{args[0] + args[1]} ),
         ("-",|args|{args[0] - args[1]} ),
         ("*",|args|{args[0] * args[1]} ),
@@ -30,28 +30,31 @@ fn read() -> LispCell {
     read_str(input.as_str())
 }
 
-fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCell{
+fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[i32])->i32)>) -> LispCell{
     if let LispCell::List{values} = exp {
         if values.len() == 0 {
             return LispCell::List{values:values};
         }else{
             //SYMBOLに合わせて関数を取得する
-            let tapl = (*enviroment).iter().find(|e|(**e).0 == "+");
-            if let Some(val) = tapl{
-                let func = val.1;               
-                //引数をint型で取得する
-                let args = vec![1,2];
-                let ret = func(args);
-                return LispCell::Number(ret);
+            let sym =&values[0];
+            if let LispCell::Symbol(sym) = sym {
+                let tapl = (*enviroment).iter().find(|e|(**e).0 == sym.as_str());
+                if let Some(val) = tapl{
+                    let func = val.1;               
+                    //引数をint型で取得する
+                    //todo: vecの各のLispCellからnumber取り出して配列にしてfuncに渡す
+                    let args = [4,2];
+                    let ret = func(&args);
+                    return LispCell::Number(ret);
+                }
             }
-
         }
         return LispCell::None;
     }
     return eval_ast(exp, enviroment)
 }
 
-fn eval_ast(exp : LispCell,enviroment:&mut Vec<(&str,fn(Vec<i32>)->i32)>) -> LispCell{
+fn eval_ast(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[i32])->i32)>) -> LispCell{
     match exp {
         LispCell::Symbol(_) => {
             return exp;
