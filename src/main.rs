@@ -10,7 +10,7 @@ mod types;
 mod eval;
 
 fn main() {
-    let mut enviroment: Vec<(&str,fn(&[i32])->i32)> = vec![
+    let mut enviroment: Vec<(&str,fn(&[&i32])->i32)> = vec![
         ("+",|args|{args[0] + args[1]} ),
         ("-",|args|{args[0] - args[1]} ),
         ("*",|args|{args[0] * args[1]} ),
@@ -30,7 +30,7 @@ fn read() -> LispCell {
     read_str(input.as_str())
 }
 
-fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[i32])->i32)>) -> LispCell{
+fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[&i32])->i32)>) -> LispCell{
     if let LispCell::List{values} = exp {
         if values.len() == 0 {
             return LispCell::List{values:values};
@@ -43,8 +43,13 @@ fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[i32])->i32)>) -> LispCell{
                     let func = val.1;               
                     //引数をint型で取得する
                     //todo: vecの各のLispCellからnumber取り出して配列にしてfuncに渡す
-                    let args = [4,2];
-                    let ret = func(&args);
+                    let iter:Vec<&i32> = values.iter().map(
+                        |cell| {match cell {
+                        LispCell::Number(val) => Some(val),
+                        _ => None,
+                    }
+                    }).filter(|e| e.is_some()).map(|e|e.unwrap()).collect();
+                    let ret = func(&iter);
                     return LispCell::Number(ret);
                 }
             }
@@ -54,7 +59,7 @@ fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[i32])->i32)>) -> LispCell{
     return eval_ast(exp, enviroment)
 }
 
-fn eval_ast(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[i32])->i32)>) -> LispCell{
+fn eval_ast(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[&i32])->i32)>) -> LispCell{
     match exp {
         LispCell::Symbol(_) => {
             return exp;
