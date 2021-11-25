@@ -35,6 +35,9 @@ fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[&i32])->i32)>) -> LispCell
         if values.len() == 0 {
             return LispCell::List{values:values};
         }else{
+            //TODO:こうしたい
+            // let exp = eval_ast(exp);　リストを渡して、新しいListを得る
+
             //SYMBOLに合わせて関数を取得する
             let sym =&values[0];
             if let LispCell::Symbol(sym) = sym {
@@ -42,7 +45,6 @@ fn eval(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[&i32])->i32)>) -> LispCell
                 if let Some(val) = tapl{
                     let func = val.1;               
                     //引数をint型で取得する
-                    //todo: vecの各のLispCellからnumber取り出して配列にしてfuncに渡す
                     let iter:Vec<&i32> = values.iter().map(
                         |cell| {match cell {
                         LispCell::Number(val) => Some(val),
@@ -65,6 +67,9 @@ fn eval_ast(exp : LispCell,enviroment:&mut Vec<(&str,fn(&[&i32])->i32)>) -> Lisp
             return exp;
         },
         LispCell::List {..} => {
+            //TODO:こうしたい
+            //let new_values = values.map(|e|eval(e)); 各項目をevalに渡して評価して
+            // return LispCell::List{values: new_values}; 評価した結果で新しいListを返す
             return exp;
         },
         _ => (),
