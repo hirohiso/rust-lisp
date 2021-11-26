@@ -83,3 +83,28 @@ fn write(out: LispCell) {
     let result = pr_str(out);
     println!("{}", result);
 }
+
+
+#[test]
+fn eval_test(){
+    let mut enviroment: Vec<(&str, fn(&[&i32]) -> i32)> = vec![
+        ("+", |args| args[0] + args[1]),
+        ("-", |args| args[0] - args[1]),
+        ("*", |args| args[0] * args[1]),
+        ("/", |args| args[0] / args[1]),
+    ];
+    let cell = read_str("(+ 1 3)");
+    let act = eval(cell, &mut enviroment);
+    let exp = LispCell::Number(4);
+    assert_eq!(exp,act);
+
+    let cell = read_str("(* 2 3)");
+    let act = eval(cell, &mut enviroment);
+    let exp = LispCell::Number(6);
+    assert_eq!(exp,act);
+
+    let cell = read_str("(* 2 (+ 2 4))");
+    let act = eval(cell, &mut enviroment);
+    let exp = LispCell::Number(12);
+    assert_eq!(exp,act);
+}

@@ -1,6 +1,5 @@
 
 
-//Enumで定義したほうが楽そう。。。。
 #[derive(Debug,PartialEq,Clone)]
 pub enum LispCell{
     Number(i32),
