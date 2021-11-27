@@ -10,7 +10,7 @@ mod reader;
 mod types;
 
 fn main() {
-    let mut enviroment: Vec<(&str, fn(&[&i32]) -> i32)> = vec![
+    let mut enviroment: Vec<(&str, fn(&[i32]) -> i32)> = vec![
         ("+", |args| args[0] + args[1]),
         ("-", |args| args[0] - args[1]),
         ("*", |args| args[0] * args[1]),
@@ -30,7 +30,7 @@ fn read() -> LispCell {
     read_str(input.as_str())
 }
 
-fn eval(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[&i32]) -> i32)>) -> LispCell {
+fn eval(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[i32]) -> i32)>) -> LispCell {
     if let LispCell::List { values } = exp {
         if values.len() == 0 {
             return LispCell::List { values: values };
@@ -44,14 +44,9 @@ fn eval(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[&i32]) -> i32)>) -> Lisp
                     if let Some(val) = tapl {
                         let func = val.1;
                         //引数をint型で取得する
-                        let iter: Vec<&i32> = values
+                        let iter: Vec<i32> = values
                             .iter()
-                            .map(|cell| match cell {
-                                LispCell::Number(val) => Some(val),
-                                _ => None,
-                            })
-                            .filter(|e| e.is_some())
-                            .map(|e| e.unwrap())
+                            .filter_map(|cell| cell.to_int())
                             .collect();
                         let ret = func(&iter);
                         return LispCell::Number(ret);
@@ -64,7 +59,7 @@ fn eval(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[&i32]) -> i32)>) -> Lisp
     return eval_ast(exp, enviroment);
 }
 
-fn eval_ast(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[&i32]) -> i32)>) -> LispCell {
+fn eval_ast(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[i32]) -> i32)>) -> LispCell {
     match exp {
         LispCell::Symbol(_) => {
             return exp;
@@ -87,7 +82,7 @@ fn write(out: LispCell) {
 
 #[test]
 fn eval_test(){
-    let mut enviroment: Vec<(&str, fn(&[&i32]) -> i32)> = vec![
+    let mut enviroment: Vec<(&str, fn(&[i32]) -> i32)> = vec![
         ("+", |args| args[0] + args[1]),
         ("-", |args| args[0] - args[1]),
         ("*", |args| args[0] * args[1]),

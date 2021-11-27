@@ -10,6 +10,15 @@ pub enum LispCell{
     None
 }
 
+impl LispCell {
+    pub fn to_int(&self)->Option<i32>{
+        if let LispCell::Number(val) = &self{
+            return Some(val.clone());
+        }
+        return None;
+    }
+}
+
 //=====================
 //test
 //======================
