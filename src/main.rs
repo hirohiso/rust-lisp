@@ -4,10 +4,12 @@ use printer::pr_str;
 use reader::read_str;
 use types::LispCell;
 
+
 mod eval;
 mod printer;
 mod reader;
 mod types;
+mod enviroment;
 
 fn main() {
     let mut enviroment: Vec<(&str, fn(&[i32]) -> i32)> = vec![
