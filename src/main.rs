@@ -37,7 +37,7 @@ fn eval(exp: LispCell, env :&mut Enviroments) -> LispCell {
         if values.len() == 0 {
             return LispCell::List { values: values };
         } else {
-            let exp = eval_ast(LispCell::List { values: values }, env);
+            let exp = eval_ast(LispCell::List { values: values },env);
             if let LispCell::List { values } = exp {
                 //SYMBOLに合わせて関数を取得する
                 let sym = &values[0];
@@ -100,6 +100,11 @@ fn eval_test(){
     assert_eq!(exp,act);
 
     let cell = read_str("(* 2 (+ 2 4))");
+    let act = eval(cell,&mut env);
+    let exp = LispCell::Number(12);
+    assert_eq!(exp,act);
+
+    let cell = read_str("(* (+ 1 2) (+ 2 (- 7 (/ 10 2))))");
     let act = eval(cell,&mut env);
     let exp = LispCell::Number(12);
     assert_eq!(exp,act);
