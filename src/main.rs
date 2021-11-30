@@ -3,6 +3,7 @@ use std::{env, io, ops::Deref};
 use printer::pr_str;
 use reader::read_str;
 use types::LispCell;
+use enviroment::Enviroments;
 
 
 mod eval;
@@ -12,16 +13,15 @@ mod types;
 mod enviroment;
 
 fn main() {
-    let mut enviroment: Vec<(&str, fn(&[i32]) -> i32)> = vec![
-        ("+", |args| args[0] + args[1]),
-        ("-", |args| args[0] - args[1]),
-        ("*", |args| args[0] * args[1]),
-        ("/", |args| args[0] / args[1]),
-    ];
+    let mut env = Enviroments::new();
+    env.push(("+", |args| args[0] + args[1]));
+    env.push(("-", |args| args[0] - args[1]));
+    env.push(("*", |args| args[0] * args[1]));
+    env.push(("/", |args| args[0] / args[1]));
 
     loop {
         println!("input eval");
-        write(eval(read(), &mut enviroment));
+        write(eval(read(),&mut env));
         println!("");
     }
 }
@@ -32,19 +32,18 @@ fn read() -> LispCell {
     read_str(input.as_str())
 }
 
-fn eval(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[i32]) -> i32)>) -> LispCell {
+fn eval(exp: LispCell, env :&mut Enviroments) -> LispCell {
     if let LispCell::List { values } = exp {
         if values.len() == 0 {
             return LispCell::List { values: values };
         } else {
-            let exp = eval_ast(LispCell::List { values: values }, enviroment);
+            let exp = eval_ast(LispCell::List { values: values }, env);
             if let LispCell::List { values } = exp {
                 //SYMBOLに合わせて関数を取得する
                 let sym = &values[0];
                 if let LispCell::Symbol(sym) = sym {
-                    let tapl = (*enviroment).iter().find(|e| (**e).0 == sym.as_str());
-                    if let Some(val) = tapl {
-                        let func = val.1;
+                    let func = (*env).find_func(sym.as_str());
+                    if let Some(func) = func {
                         //引数をint型で取得する
                         let iter: Vec<i32> = values
                             .iter()
@@ -58,16 +57,16 @@ fn eval(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[i32]) -> i32)>) -> LispC
         }
         return LispCell::None;
     }
-    return eval_ast(exp, enviroment);
+    return eval_ast(exp,env);
 }
 
-fn eval_ast(exp: LispCell, enviroment: &mut Vec<(&str, fn(&[i32]) -> i32)>) -> LispCell {
+fn eval_ast(exp: LispCell, env :&mut Enviroments) -> LispCell {
     match exp {
         LispCell::Symbol(_) => {
             return exp;
         }
         LispCell::List {  values } => {
-            let new_values = values.iter().map(|e|eval(e.clone(),enviroment)).collect();
+            let new_values = values.iter().map(|e|eval(e.clone(),env)).collect();
             return LispCell::List{values: new_values}; 
             //return LispCell::None;
         }
@@ -84,24 +83,24 @@ fn write(out: LispCell) {
 
 #[test]
 fn eval_test(){
-    let mut enviroment: Vec<(&str, fn(&[i32]) -> i32)> = vec![
-        ("+", |args| args[0] + args[1]),
-        ("-", |args| args[0] - args[1]),
-        ("*", |args| args[0] * args[1]),
-        ("/", |args| args[0] / args[1]),
-    ];
+    let mut env = Enviroments::new();
+    env.push(("+", |args| args[0] + args[1]));
+    env.push(("-", |args| args[0] - args[1]));
+    env.push(("*", |args| args[0] * args[1]));
+    env.push(("/", |args| args[0] / args[1]));
+
     let cell = read_str("(+ 1 3)");
-    let act = eval(cell, &mut enviroment);
+    let act = eval(cell, &mut env);
     let exp = LispCell::Number(4);
     assert_eq!(exp,act);
 
     let cell = read_str("(* 2 3)");
-    let act = eval(cell, &mut enviroment);
+    let act = eval(cell,&mut env);
     let exp = LispCell::Number(6);
     assert_eq!(exp,act);
 
     let cell = read_str("(* 2 (+ 2 4))");
-    let act = eval(cell, &mut enviroment);
+    let act = eval(cell,&mut env);
     let exp = LispCell::Number(12);
     assert_eq!(exp,act);
 }
