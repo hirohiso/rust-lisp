@@ -1,6 +1,9 @@
+use crate::types::LispCell;
 
 pub struct Enviroments<'a>{
     functions :Vec<(&'a str, fn(&[i32]) -> i32)>,
+    outer : Option<&'a Enviroments<'a>>,
+    data : Vec<(&'a str, LispCell)>,
 }
 
 impl<'a> Enviroments<'a>{
@@ -16,7 +19,7 @@ impl<'a> Enviroments<'a>{
     }
 
     pub fn new()-> Enviroments<'a>{
-        Enviroments{functions: Vec::new()}
+        Enviroments{functions: Vec::new(),outer:None,data:Vec::new()}
     }
 }
 
