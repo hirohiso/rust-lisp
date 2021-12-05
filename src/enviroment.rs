@@ -3,7 +3,7 @@ use crate::types::LispCell;
 pub struct Enviroments<'a>{
     functions :Vec<(&'a str, fn(&[i32]) -> i32)>,
     outer : Option<&'a Enviroments<'a>>,
-    data : Vec<(&'a str, LispCell)>,
+    data : Vec<(String, LispCell)>,
 }
 
 impl<'a> Enviroments<'a>{

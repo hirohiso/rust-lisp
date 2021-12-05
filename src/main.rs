@@ -5,7 +5,6 @@ use reader::read_str;
 use types::LispCell;
 use enviroment::Enviroments;
 
-
 mod eval;
 mod printer;
 mod reader;
