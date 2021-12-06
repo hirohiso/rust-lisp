@@ -18,6 +18,10 @@ impl<'a> Enviroments<'a>{
         self.functions.push(tapl);
     }
 
+    pub fn set(&mut self,symbol : String,value :LispCell){
+        self.data.push((symbol,value));
+    }
+
     pub fn new()-> Enviroments<'a>{
         Enviroments{functions: Vec::new(),outer:None,data:Vec::new()}
     }
