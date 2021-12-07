@@ -22,6 +22,12 @@ impl<'a> Enviroments<'a>{
         self.data.push((symbol,value));
     }
 
+    pub fn find(& self,symbol : &str)->&Enviroments{
+        //dataにsymbolがあるか確認する
+        //ないならouterのfindを呼ぶ
+        return self
+    }
+
     pub fn new()-> Enviroments<'a>{
         Enviroments{functions: Vec::new(),outer:None,data:Vec::new()}
     }
