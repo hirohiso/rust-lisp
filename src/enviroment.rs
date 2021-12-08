@@ -41,7 +41,7 @@ impl<'a> Enviroments<'a>{
 
 #[test]
 fn test(){
-    let mut env = Enviroments  {functions:vec![]};
+    let mut env = Enviroments::new();
     env.push(("+", |args| args[0] + args[1]));
     env.push(("-", |args| args[0] - args[1]));
     env.push(("*", |args| args[0] * args[1]));

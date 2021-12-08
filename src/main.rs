@@ -108,3 +108,18 @@ fn eval_test(){
     let exp = LispCell::Number(12);
     assert_eq!(exp,act);
 }
+
+#[test]
+fn step3_test(){
+    let mut env = Enviroments::new();
+    env.push(("+", |args| args[0] + args[1]));
+    env.push(("-", |args| args[0] - args[1]));
+    env.push(("*", |args| args[0] * args[1]));
+    env.push(("/", |args| args[0] / args[1]));
+
+    let cell = read_str("(def! a 6)");
+    let act = eval(cell, &mut env);
+    let exp = LispCell::Number(6);
+    assert_eq!(exp,act);
+
+}
