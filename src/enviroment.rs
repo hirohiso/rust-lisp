@@ -27,6 +27,12 @@ impl<'a> Enviroments<'a>{
         //ないならouterのfindを呼ぶ
         return self
     }
+    pub fn get(& self,symbol:&str)->LispCell{
+        //findを呼んでEnviromentを得る
+        //enviromentのdataからvalueを返却する
+        //存在しない場合は例外を投げる
+        return LispCell::None;
+    }
 
     pub fn new()-> Enviroments<'a>{
         Enviroments{functions: Vec::new(),outer:None,data:Vec::new()}
