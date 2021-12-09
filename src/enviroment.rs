@@ -24,8 +24,16 @@ impl<'a> Enviroments<'a>{
 
     pub fn find(& self,symbol : &str)->&Enviroments{
         //dataにsymbolがあるか確認する
+        let value = self.data.iter().find(|e|e.0.as_str() == symbol).map(|e|e.1.clone());
         //ないならouterのfindを呼ぶ
-        return self
+        if value.is_none() {
+            let outer = self.outer;
+            if let Some(env) = outer {
+                return env.find(symbol);
+            }
+            panic!("Not Found Enviroment")
+        }
+        return self;
     }
     pub fn get(& self,symbol:&str)->LispCell{
         //findを呼んでEnviromentを得る
